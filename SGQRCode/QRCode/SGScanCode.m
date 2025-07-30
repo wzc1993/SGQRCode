@@ -23,6 +23,9 @@
 @property (nonatomic, strong) NSArray *metadataObjectTypes;
 @property (nonatomic, strong) AVCaptureVideoPreviewLayer *videoPreviewLayer;
 @property (nonatomic, strong) dispatch_queue_t captureQueue;
+
+@property (nonatomic,assign)BOOL hasCapturedResult; // 是否扫描到结果
+
 @end
 
 @implementation SGScanCode
@@ -124,6 +127,7 @@
 }
 
 - (void)startRunning {
+    self.hasCapturedResult = NO;
     if (![self.session isRunning]) {
         [self.session startRunning];
     }
@@ -245,8 +249,13 @@
 
 #pragma mark - - AVCaptureMetadataOutputObjectsDelegate 的方法
 - (void)captureOutput:(AVCaptureOutput *)captureOutput didOutputMetadataObjects:(NSArray *)metadataObjects fromConnection:(AVCaptureConnection *)connection {
+    if (self.hasCapturedResult) {
+        return;
+    }
+    
     if (metadataObjects != nil && metadataObjects.count > 0) {
         AVMetadataMachineReadableCodeObject *obj = metadataObjects[0];
+        self.hasCapturedResult = YES;
         NSString *resultString = obj.stringValue;
 
         dispatch_async(dispatch_get_main_queue(), ^{

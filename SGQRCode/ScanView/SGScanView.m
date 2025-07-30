@@ -76,23 +76,30 @@
     if (!_scanlineImgView) {
         _scanlineImgView = [[UIImageView alloc] init];
         
-        /// 静态库 url 的获取
-        NSURL *url = [[NSBundle mainBundle] URLForResource:@"SGQRCode" withExtension:@"bundle"];
-        if (!url) {
-            /// 动态库 url 的获取
-            url = [[NSBundle bundleForClass:[self class]] URLForResource:@"SGQRCode" withExtension:@"bundle"];
-        }
-        NSBundle *bundle = [NSBundle bundleWithURL:url];
-        
-        UIImage *image = [UIImage imageNamed:self.configure.scanline inBundle:bundle compatibleWithTraitCollection:nil];
-        if (!image) {
-            image = [UIImage imageNamed:self.configure.scanline];
-        }
-        _scanlineImgView.image = image;
-        
-        if (image) {
+        if (self.configure.scanImage) {
+            _scanlineImgView.image = self.configure.scanImage;
             [self updateScanLineFrame];
+        }else {
+            /// 静态库 url 的获取
+            NSURL *url = [[NSBundle mainBundle] URLForResource:@"SGQRCode" withExtension:@"bundle"];
+            if (!url) {
+                /// 动态库 url 的获取
+                url = [[NSBundle bundleForClass:[self class]] URLForResource:@"SGQRCode" withExtension:@"bundle"];
+            }
+            NSBundle *bundle = [NSBundle bundleWithURL:url];
+            
+            UIImage *image = [UIImage imageNamed:self.configure.scanline inBundle:bundle compatibleWithTraitCollection:nil];
+            if (!image) {
+                image = [UIImage imageNamed:self.configure.scanline];
+            }
+            _scanlineImgView.image = image;
+            if (image) {
+                [self updateScanLineFrame];
+            }
         }
+        
+        
+        
     }
     return _scanlineImgView;
 }
